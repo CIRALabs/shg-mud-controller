@@ -16,6 +16,10 @@
    * deal with operators in matching rules
    * mud validation
 
+###deps
+ * https://github.com/rxi/log.lua
+ * https://github.com/mpx/lua-cjson   
+   
 Usage   
 ```bash
    lua mud_controller <mud_file_path> <mac_addr>

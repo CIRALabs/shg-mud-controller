@@ -1,0 +1,43 @@
+{
+  "ietf-mud:mud": {
+    "mud-version": 1,
+    "mud-url": "https://cira.ca/mud/ciratoaster",
+    "last-update": "2018-08-02T17:12:07+02:00",
+    "cache-validity": 48,
+    "is-supported": true,
+    "systeminfo": "Lets toast! o",
+    "from-device-policy": {
+      "access-lists": {
+        "access-list": [
+          {
+            "name": "mud-41611-v4fr"
+          }
+        ]
+      }
+    }
+  },
+  "ietf-access-control-list:acls": {
+    "acl": [
+      {
+        "name": "mud-41611-v4fr",
+        "type": "ipv4-acl-type",
+        "aces": {
+          "ace": [
+            {
+              "name": "iot_allow_toaster_icmp",
+              "matches": {
+                "ipv4": {
+                  "ietf-acldns:s:qrc-dnsname": "cira.ca",
+                  "protocol": 1
+                },
+                "actions": {
+                  "forwarding": "accept"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

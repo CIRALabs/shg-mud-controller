@@ -2,6 +2,9 @@
 
 
 # MUD controller Proof of Concept
+ * Engine that will be executed in the SHG. After a new device has entered the network and it's confirmation is sent through the mobile app this MUD controller is then triggered in order to: Read the MUD file and create the appropriate firewall rules in the SHG.
+ 
+ 
 ## What we have: 
    * Parse local MUD json file 
    * Identify acls/aces

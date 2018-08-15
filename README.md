@@ -27,15 +27,41 @@ Usage
    
 eg.:
 ```bash
-root@OpenWrt:~/iot_controller# lua mud_controller.lua toaster_mud.json '08:00:27:13:89:9E'
-[INFO  18:38:28] mud_controller.lua:2: CiraLabs MUD interpreter... o/
-[INFO  18:38:28] mud_controller.lua:22: >>>  toaster_mud.json  loaded successfully!
-[INFO  18:38:28] mud_controller.lua:29: Parsing MUD for  https://cira.ca/mud/ciratoaster
-[INFO  18:38:28] mud_controller.lua:30: sysinfo:  Lets toast! o
-[INFO  18:38:28] mud_controller.lua:31: device supported?:  true
-[INFO  18:38:28] mud_controller.lua:32: last-pdate:  2018-08-02T17:12:07+02:00
-[INFO  18:38:28] mud_controller.lua:40: fr->>  1 mud-41611-v4fr
-[WARN  18:38:28] mud_controller.lua:54: No 'to-device-policy' declared.
-[INFO  18:38:28] mud_controller.lua:90: Added to f_dev_pols::  mud-41611-v4fr
-[INFO  18:38:28] mud_controller.lua:68: creating rule for  mud-41611-v4fr
+
+root@OpenWrt:~/iot_controller# lua mud_controller.lua toaster_mud.json '08:00:27:f0:5b:76'
+[INFO  19:25:59] mud_controller.lua:2: CiraLabs MUD interpreter... o/
+[INFO  19:25:59] mud_controller.lua:22: >>>  toaster_mud.json  loaded successfully!
+[INFO  19:25:59] mud_controller.lua:28: Parsing MUD for  https://cira.ca/mud/smarttoaster2k
+[INFO  19:25:59] mud_controller.lua:29: sysinfo:  SmartToaster 2K
+[INFO  19:25:59] mud_controller.lua:30: device supported?:  true
+[INFO  19:25:59] mud_controller.lua:31: last-pdate:  2018-08-02T17:12:07+02:00
+[INFO  19:25:59] mud_controller.lua:39: Declared ACL (from):  1 mud-41611-v4fr
+[INFO  19:25:59] mud_controller.lua:39: Declared ACL (from):  2 mud-41612-v4fr
+[INFO  19:25:59] mud_controller.lua:39: Declared ACL (from):  3 mud-41613-v4fr
+[WARN  19:25:59] mud_controller.lua:53: No 'to-device-policy' declared.
+[INFO  19:25:59] mud_controller.lua:59: ACL spec (from):  mud-41611-v4fr
+[INFO  19:25:59] ./mud_util.lua:68: 1  ACE:  iot_toaster_ping  proto :  icmp
+[INFO  19:25:59] ./mud_util.lua:69:  url:  cira.ca
+[INFO  19:25:59] ./mud_util.lua:38:  UCI fw rule created:  iot_toaster_ping  -  08:00:27:f0:5b:76  >  8.8.8.8
+[INFO  19:25:59] mud_controller.lua:59: ACL spec (from):  mud-41612-v4fr
+[INFO  19:25:59] ./mud_util.lua:68: 1  ACE:  iot_toaster_app  proto :  tcp
+[INFO  19:25:59] ./mud_util.lua:69:  url:  cira.ca
+[INFO  19:25:59] ./mud_util.lua:38:  UCI fw rule created:  iot_toaster_app  -  08:00:27:f0:5b:76  >  8.8.8.8
+[INFO  19:25:59] ./mud_util.lua:68: 2  ACE:  iot_toaster_dns  proto :  tcp
+[INFO  19:25:59] ./mud_util.lua:69:  url:  ns1.ciralabs.ca
+[INFO  19:25:59] ./mud_util.lua:75:  src port : no_port
+[INFO  19:25:59] ./mud_util.lua:79:  dest port :  53
+[INFO  19:25:59] ./mud_util.lua:38:  UCI fw rule created:  iot_toaster_dns  -  08:00:27:f0:5b:76  >  8.8.8.8
+[INFO  19:25:59] ./mud_util.lua:68: 3  ACE:  iot_toaster_update  proto :  udp
+[INFO  19:25:59] ./mud_util.lua:69:  url:  update.ciralabs.ca
+[INFO  19:25:59] ./mud_util.lua:72:  src  port :  7500
+[INFO  19:25:59] ./mud_util.lua:79:  dest port :  9000
+[INFO  19:25:59] ./mud_util.lua:38:  UCI fw rule created:  iot_toaster_update  -  08:00:27:f0:5b:76  >  8.8.8.8
+[INFO  19:25:59] mud_controller.lua:59: ACL spec (from):  mud-41613-v4fr
+[INFO  19:25:59] ./mud_util.lua:68: 1  ACE:  iot_toaster_google  proto :  tcp
+[INFO  19:25:59] ./mud_util.lua:69:  url:  www.google-analytics.com
+[INFO  19:25:59] ./mud_util.lua:75:  src port : no_port
+[INFO  19:25:59] ./mud_util.lua:79:  dest port :  443
+[INFO  19:25:59] ./mud_util.lua:38:  UCI fw rule created:  iot_toaster_google  -  08:00:27:f0:5b:76  >  8.8.8.8
+
 ```

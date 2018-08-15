@@ -1,16 +1,22 @@
 {
   "ietf-mud:mud": {
     "mud-version": 1,
-    "mud-url": "https://cira.ca/mud/ciratoaster",
+    "mud-url": "https://cira.ca/mud/smarttoaster2k",
     "last-update": "2018-08-02T17:12:07+02:00",
     "cache-validity": 48,
     "is-supported": true,
-    "systeminfo": "Lets toast! o",
+    "systeminfo": "SmartToaster 2K",
     "from-device-policy": {
       "access-lists": {
         "access-list": [
           {
             "name": "mud-41611-v4fr"
+          },
+          {
+            "name": "mud-41612-v4fr"
+          },
+          {
+            "name": "mud-41613-v4fr"
           }
         ]
       }
@@ -24,20 +30,109 @@
         "aces": {
           "ace": [
             {
-              "name": "iot_allow_toaster_icmp",
+              "name": "iot_toaster_ping",
               "matches": {
                 "ipv4": {
                   "ietf-acldns:s:qrc-dnsname": "cira.ca",
                   "protocol": 1
                 },
                 "actions": {
-                  "forwarding": "accept"
+                  "forwarding": "ACCEPT"
                 }
               }
             }
           ]
         }
-      }
+      },
+      {
+        "name": "mud-41612-v4fr",
+        "type": "ipv4-acl-type",
+        "aces": {
+          "ace": [
+            {
+              "name": "iot_toaster_app",
+              "matches": {
+                "ipv4": {
+                  "ietf-acldns:s:qrc-dnsname": "cira.ca",
+                  "protocol": 6
+                },
+                "actions": {
+                  "forwarding": "ACCEPT"
+                }
+              }
+            },
+			{
+              "name": "iot_toaster_dns",
+              "matches": {
+                "ipv4": {
+                  "ietf-acldns:s:qrc-dnsname": "ns1.ca",
+                  "protocol": 6
+                },
+				"tcp": {
+					"ietf-mud:direction-initiated": "from-device",
+					"destination-port": {
+							"operator": "eq",
+							"port": 53
+					}
+				},
+                "actions": {
+                  "forwarding": "ACCEPT"
+                }
+              }
+            },
+			{
+              "name": "iot_toaster_update",
+              "matches": {
+                "ipv4": {
+                  "ietf-acldns:s:qrc-dnsname": "update.ciralabs.ca",
+                  "protocol": 17
+                },
+				"udp": {
+					"ietf-mud:direction-initiated": "from-device",
+					"destination-port": {
+							"operator": "eq",
+							"port": 9000
+					},
+					"source-port": {
+							"operator": "eq",
+							"port": 7500
+					}
+				},
+                "actions": {
+                  "forwarding": "ACCEPT"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "mud-41613-v4fr",
+        "type": "ipv4-acl-type",
+        "aces": {
+          "ace": [
+            {
+              "name": "iot_toaster_google",
+              "matches": {
+                "ipv4": {
+                  "ietf-acldns:s:qrc-dnsname": "www.google-analytics.com",
+                  "protocol": 6
+                },
+				"tcp": {
+					"ietf-mud:direction-initiated": "from-device",
+					"destination-port": {
+						"operator": "eq",
+						"port": 443
+					}
+				},
+                "actions": {
+                  "forwarding": "ACCEPT"
+                }
+              }
+            }
+          ]
+        }
+      }	  
     ]
   }
 }

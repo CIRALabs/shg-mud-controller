@@ -1,5 +1,4 @@
-
-local log = require "log"
+log = require "log"
 log.info('CiraLabs MUD interpreter... o/')
 log.outfile = 'ciralabs.log'
 local json = require "cjson"
@@ -26,7 +25,6 @@ else
    return
 end
 
-
 log.info('Parsing MUD for ', mud_obj['ietf-mud:mud']['mud-url'])
 log.info('sysinfo: ', mud_obj['ietf-mud:mud']['systeminfo'])
 log.info('device supported?: ', mud_obj['ietf-mud:mud']['is-supported'])
@@ -38,7 +36,7 @@ t_dev_pols = {}
 --retrieving FROM dev policies
 if mud_obj['ietf-mud:mud']['from-device-policy'] ~= nil then
    for k, v in pairs(mud_obj['ietf-mud:mud']['from-device-policy']['access-lists']['access-list']) do
-      log.info('fr->> ', k, v.name)
+      log.info('Declared ACL (from): ', k, v.name)
       f_dev_pols[v.name] = {}
    end
 else
@@ -48,52 +46,22 @@ end
 --retrieving TO dev policies
 if mud_obj['ietf-mud:mud']['to-device-policy'] ~= nil then
    for k, v in pairs(mud_obj['ietf-mud:mud']['to-device-policy']['access-lists']['access-list']) do
-      log.info('to->> ', k, v.name)
+      log.info('Declared ACL (to): ', k, v.name)
       t_dev_pols[v.name] = {}
    end
 else
    log.warn('No \'to-device-policy\' declared.')
 end
 
-
-function geturlproto(type, ace)
-   if type == 'ipv6-acl-type' then
-      return ace.matches.ipv6['ietf-acldns:s:qrc-dnsname'], ace.matches.ipv6.protocol
-   else
-      return ace.matches.ipv4['ietf-acldns:s:qrc-dnsname'], ace.matches.ipv4.protocol
-   end
-end
-
-
-function create_rule(acl)
-   log.info('creating rule for ', acl.name)
-   if( acl.aces.ace) ~= nil then
-      for k, v in pairs(acl.aces.ace) do
-         url, proto = geturlproto(acl.type, v)
-         ace_info = {
-            --TODO we shouldnt rely on v.name it can be invalid for uci
-            name = v.name, target = v.matches.actions.forwarding, proto=proto,
-            src='iots', src_mac=mac_addr,
-            dest='wan', dest_ip=mudutil.resolvename(url)
-         }
-         mudutil.executeuci(ace_info)
-      end
-   else
-      log.warn('no ace found in acl: ', acl.name)
-   end
-
-end
-
-
 for k,v in pairs(mud_obj['ietf-access-control-list:acls']['acl']) do
    if f_dev_pols[v.name] ~= nil then
       f_dev_pols[v.name] = v
-      log.info('Added to f_dev_pols:: ', v.name)
-      create_rule(v)
+      log.info('ACL spec (from): ', v.name)
+      mudutil.createrule(v)
    elseif t_dev_pols[v.name] ~= nil then
       t_dev_pols[v.name] = v
-      log.info('Added to t_dev_pols:: ', v.name)
-      create_rule(v)
+      log.info('ACL spec (to): ', v.name)
+      mudutil.createrule(v)
    else
      log.warn('ACL declared but not assigned to device: ', v.name)
    end

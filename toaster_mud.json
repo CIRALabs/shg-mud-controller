@@ -16,7 +16,13 @@
             "name": "mud-41612-v4fr"
           },
           {
+            "name": "mud-41612-v6fr"
+          },
+          {
             "name": "mud-41613-v4fr"
+          },
+          {
+            "name": "mud-41613-v6fr"
           }
         ]
       }
@@ -61,43 +67,63 @@
                 }
               }
             },
-			{
+            {
               "name": "iot_toaster_dns",
               "matches": {
                 "ipv4": {
                   "ietf-acldns:s:qrc-dnsname": "ns1.ca",
                   "protocol": 6
                 },
-				"tcp": {
-					"ietf-mud:direction-initiated": "from-device",
-					"destination-port": {
-							"operator": "eq",
-							"port": 53
-					}
-				},
+                "tcp": {
+                    "ietf-mud:direction-initiated": "from-device",
+                    "destination-port": {
+                        "operator": "eq",
+                        "port": 53
+                    }
+                },
                 "actions": {
                   "forwarding": "ACCEPT"
                 }
               }
             },
-			{
+            {
               "name": "iot_toaster_update",
               "matches": {
                 "ipv4": {
                   "ietf-acldns:s:qrc-dnsname": "update.ciralabs.ca",
                   "protocol": 17
                 },
-				"udp": {
-					"ietf-mud:direction-initiated": "from-device",
-					"destination-port": {
-							"operator": "eq",
-							"port": 9000
-					},
-					"source-port": {
-							"operator": "eq",
-							"port": 7500
-					}
-				},
+                "udp": {
+                    "ietf-mud:direction-initiated": "from-device",
+                    "destination-port": {
+                      "operator": "eq",
+                      "port": 9000
+                    },
+                    "source-port": {
+                      "operator": "eq",
+                       "port": 7500
+                    }
+                },
+                "actions": {
+                  "forwarding": "ACCEPT"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "mud-41612-v6fr",
+        "type": "ipv6-acl-type",
+        "aces": {
+          "ace": [
+            {
+              "name": "iot_toaster_app",
+              "matches": {
+                "ipv6": {
+                  "ietf-acldns:s:qrc-dnsname": "cira.ca",
+                  "protocol": 6
+                },
                 "actions": {
                   "forwarding": "ACCEPT"
                 }
@@ -118,13 +144,13 @@
                   "ietf-acldns:s:qrc-dnsname": "www.google-analytics.com",
                   "protocol": 6
                 },
-				"tcp": {
-					"ietf-mud:direction-initiated": "from-device",
-					"destination-port": {
-						"operator": "eq",
-						"port": 443
-					}
-				},
+                "tcp": {
+                    "ietf-mud:direction-initiated": "from-device",
+                    "destination-port": {
+                        "operator": "eq",
+                        "port": 443
+                    }
+                },
                 "actions": {
                   "forwarding": "ACCEPT"
                 }
@@ -132,7 +158,34 @@
             }
           ]
         }
-      }	  
+      },
+      {
+        "name": "mud-41613-v6fr",
+        "type": "ipv6-acl-type",
+        "aces": {
+          "ace": [
+            {
+              "name": "iot_toaster_google",
+              "matches": {
+                "ipv6": {
+                  "ietf-acldns:s:qrc-dnsname": "www.google-analytics.com",
+                  "protocol": 6
+                },
+                "tcp": {
+                    "ietf-mud:direction-initiated": "from-device",
+                    "destination-port": {
+                        "operator": "eq",
+                        "port": 443
+                    }
+                },
+                "actions": {
+                  "forwarding": "ACCEPT"
+                }
+              }
+            }
+          ]
+        }
+      }
     ]
   }
 }

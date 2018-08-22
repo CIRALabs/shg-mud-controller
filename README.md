@@ -5,20 +5,19 @@
 ## What we have: 
    * Parse local MUD json file 
    * Identify acls/aces
-   * Creates new firewall rule using uci
+   * Creates new firewall rule using uci - bindings for lua
+   * Resolve urls 
+   * Creates one iptables rule per retrieved IP
    
 ## We DONT yet
-   * Resolve url into IP 
+
    * manage rule name - instead of just using mud name 
-   * download mud file
-   * deal with ports
-   * deal with from/to device 
-   * deal with operators in matching rules
-   * mud validation
 
 ###deps
  * https://github.com/rxi/log.lua
- * https://github.com/mpx/lua-cjson   
+ * https://github.com/mpx/lua-cjson 
+ * http://downloads.openwrt.org/releases/18.06.0/packages/x86_64/base/libuci-lua_2018-08-11-4c8b4d6e-1_x86_64.ip
+ * https://github.com/zeitgeist87/LuaResolver
    
 Usage   
 ```bash

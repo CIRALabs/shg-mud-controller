@@ -2,6 +2,9 @@
 
 
 # MUD controller Proof of Concept
+ * Engine that will be executed in the SHG. After a new device has entered the network and it's confirmation is sent through the mobile app this MUD controller is then triggered in order to: Read the MUD file and create the appropriate firewall rules in the SHG.
+ 
+ 
 ## What we have: 
    * Parse local MUD json file 
    * Identify acls/aces
@@ -9,14 +12,14 @@
    * Resolve urls 
    * Creates one iptables rule per retrieved IP
    
-## We DONT yet
+## We don't yet
 
-   * manage rule name - instead of just using mud name 
+   * manage rule name - instead of just using it from mud file 
 
-###deps
+### deps
  * https://github.com/rxi/log.lua
  * https://github.com/mpx/lua-cjson 
- * http://downloads.openwrt.org/releases/18.06.0/packages/x86_64/base/libuci-lua_2018-08-11-4c8b4d6e-1_x86_64.ip
+ * http://downloads.openwrt.org/releases/18.06.0/packages/x86_64/base/libuci-lua_2018-08-11-4c8b4d6e-1_x86_64.ipk
  * https://github.com/zeitgeist87/LuaResolver
    
 Usage   
@@ -26,7 +29,6 @@ Usage
    
 eg.:
 ```bash
-
 root@OpenWrt:~/iot_controller# lua mud_controller.lua toaster_mud.json '08:00:27:f0:5b:76'
 [INFO  19:25:59] mud_controller.lua:2: CiraLabs MUD interpreter... o/
 [INFO  19:25:59] mud_controller.lua:22: >>>  toaster_mud.json  loaded successfully!

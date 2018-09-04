@@ -1,4 +1,4 @@
-mud_dlocal muddigger = { _version = "0.1.0" }
+local muddigger = { _version = "0.1.0" }
 local Resolver = require( "dns.resolver")
 local r = Resolver.new({"8.8.8.8"}, 2)
 
@@ -17,4 +17,9 @@ muddigger.dig = function (qname, type)
   end
   return resp
 end
+
+
+return muddigger
+
+
 

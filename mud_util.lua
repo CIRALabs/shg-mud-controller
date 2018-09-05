@@ -38,7 +38,8 @@ function geturlproto(type, ace)
   end
 end
 
-mudutil.createrule = function (acl)
+mudutil.createrule = function (acl, mac_addr )
+  local created_rules = {}
   if( acl.aces.ace) ~= nil then
     for k, v in pairs(acl.aces.ace) do
 
@@ -80,6 +81,7 @@ mudutil.createrule = function (acl)
           ace_info.dest_ip = v
           ace_info.name = basename .. '_' .. ipv .. '_' .. i
           executeuci(ace_info)
+          created_rules[ace_info.name] = ace_info.name
         end
       else
         log.warn('Skipping rule for: ', url, ' no ips retrieved.')
@@ -90,6 +92,7 @@ mudutil.createrule = function (acl)
   else
     log.warn('no ace found in acl: ', acl.name)
   end
+  return created_rules
 end
 
 return mudutil

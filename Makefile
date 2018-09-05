@@ -1,4 +1,5 @@
-DESTDIR?=
+PREFIX?=
+DESTDIR?=${PREFIX}
 MUDSUPER=${DESTDIR}/usr/lib/lua/mud-super
 
 all:

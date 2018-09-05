@@ -1,6 +1,6 @@
 log = require "log"
 log.info('CiraLabs MUD interpreter... o/')
-log.outfile = 'ciralabs.log'
+log.outfile = '/var/log/mud_controller.log'
 local json = require "cjson"
 local util = require "cjson.util"
 local mudutil = require "mud_util"

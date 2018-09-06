@@ -12,11 +12,13 @@
    
 ### Deps
  * http://downloads.openwrt.org/releases/18.06.0/packages/i386_pentium4/base/libuci-lua_2018-08-11-4c8b4d6e-1_i386_pentium4.ipk
- * https://github.com/rxi/log.lua 
+ * https://github.com/mpx/lua-cjson 
+ * http://downloads.openwrt.org/releases/18.06.0/packages/i386_pentium4/packages/luasocket_3.0-rc1-20130909-4_i386_pentium4.ipk
 
 #### Pre-committed:
  * https://github.com/zeitgeist87/LuaResolver 
- * https://github.com/mpx/lua-cjson 
+ * https://github.com/rxi/log.lua 
+ 
    
 ## Usage   
 #### Start listener

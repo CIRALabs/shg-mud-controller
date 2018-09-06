@@ -1,4 +1,8 @@
-
+-- code that stubs the mud_supervisor 
+-- for testing purposes only
+-- to connect with the domain socket
+-- First: lua mud_listener.lua
+--   then lua sup_stub.lua
 
 socket = require"socket"
 socket.unix = require"socket.unix"

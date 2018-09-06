@@ -1,3 +1,5 @@
+LUA_PATH = '/usr/lib/lua/mud-super/?.lua'
+
 log = require "log"
 log.info('CiraLabs MUD interpreter... o/')
 log.outfile = '/var/log/mud_controller.log'

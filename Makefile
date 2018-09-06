@@ -10,3 +10,4 @@ install:
 	cp mud_controller.lua ${MUDSUPER}
 	cp mud_digger.lua     ${MUDSUPER}
 	cp mud_util.lua       ${MUDSUPER}
+	cp log.lua            ${MUDSUPER}

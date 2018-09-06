@@ -6,15 +6,18 @@ local mudutil = require "mud_util"
 
 local mudcontroller = { _version = "0.1.0" }
 
+function decode_f(f_path)
+   l_file = assert(util.file_load(f_path))
+   return json.decode(l_file)
+end
+
 mudcontroller.load = function(f_path, mac_addr)
-  if f_path == nil or mac_addr == nil then
-     log.error('no file_path or mac_addr! will halt! ')
-     log.info('Usage: lua mud_controller <mud_file_path> <mac_addr>')
-     return
-  end
   log.info('Loading file: ', f_path, ' for ', mac_addr )
 
-  mud_obj = json.decode(util.file_load(f_path))
+  status, mud_obj = pcall(decode_f, f_path)
+  if not status then
+    return wrap_err_obj('Error loading mud file: ' ..  mud_obj)
+  end
 
   log.info('Parsing MUD for ', mud_obj['ietf-mud:mud']['mud-url'])
   log.info('sysinfo: ', mud_obj['ietf-mud:mud']['systeminfo'])

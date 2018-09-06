@@ -8,7 +8,7 @@ assert(c:connect(skt_path))
 print('skt connected: ', skt_path)
 
 while 1 do
-   print('Type data to send_:')
+   print('Type data to send_')
    local yy = io.read()
    assert(c:send(yy .. '\n' ))
    print('Waiting reply... \n')

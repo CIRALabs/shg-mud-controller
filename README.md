@@ -18,15 +18,15 @@
  * https://github.com/zeitgeist87/LuaResolver 
  * https://github.com/mpx/lua-cjson 
    
-##Usage   
-####Start listener
+## Usage   
+#### Start listener
 ```bash
    lua mud_listener.lua
 ```
  
  * This will create a mud_controller_skt on the execution folder.
  
- ####Start stub to send msgs
+ #### Start stub to send msgs
 ```bash
    lua sup_stub.lua
 ```

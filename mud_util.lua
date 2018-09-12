@@ -13,6 +13,35 @@ local protolabel = {
   [89] = 'ospf'
 }
 
+function restartFw()
+  os.execute('/etc/init.d/firewall restart > /dev/null 2>&1')
+end
+
+mudutil.delrules = function(todel)
+  local resp_obj = {}
+  resp_obj['status'] = "ok"
+  resp_obj['rules'] = {}
+  for kname,vname in pairs(todel) do
+    local found = false
+    for k,v in pairs(uci.cursor().get_all(fw)) do
+      if (v['.name'] == vname  or v['name'] == vname) and v['.type'] == 'rule' then
+        log.info('Deleting: name=', v['name'] , ' .name=', v['.name'] )
+        ucic.delete(fw, v['.name'])
+        found = true
+        resp_obj['rules'][vname] = "ok"
+      end
+    end
+    if not found then
+      resp_obj['rules'][vname] = "rnf"
+      resp_obj['status'] = "err"
+    end
+  end
+
+  ucic.commit(fw)
+  restartFw()
+  return resp_obj
+end
+
 function executeuci(rule)
   ucic.delete(fw, rule.name)
   ucic.commit(fw)
@@ -25,8 +54,12 @@ function executeuci(rule)
   ucic.reorder(fw, rule.name, 0)
   ucic.commit(fw)
 
-  os.execute('/etc/init.d/firewall restart > /dev/null 2>&1')
-  log.info(' >>> UCI fw rule created: ', rule.name, ' - ', rule.src_mac, ' > ', rule.dest_ip  )
+  restartFw()
+  if rule.src_mac ~= nil then
+    log.info(' >>> UCI fw rule created: ', rule.name, ' - ', rule.src_mac, ' > ', rule.dest_ip  )
+  else
+    log.info(' >>> UCI fw rule created: ', rule.name, ' - ', rule.dest_ip, ' > ', rule.dest_mac  )
+  end
 
 end
 
@@ -38,7 +71,7 @@ function geturlproto(type, ace)
   end
 end
 
-mudutil.createrule = function (acl, mac_addr )
+mudutil.createrule = function (acl, mac_addr, direction)
   local created_rules = {}
   if( acl.aces.ace) ~= nil then
     for k, v in pairs(acl.aces.ace) do
@@ -48,11 +81,19 @@ mudutil.createrule = function (acl, mac_addr )
 
       ace_info = {
         --TODO we shouldnt rely on v.name it can be invalid for uci
-        name = v.name, target = v.matches.actions.forwarding, proto=proton,
-        src='iots', src_mac=mac_addr,
-        dest='wan'
+        name = v.name, target = v.matches.actions.forwarding, proto=proton
       }
-
+     
+      if direction == 'to' then
+        ace_info.src = 'wan'
+        ace_info.dest = 'iots'
+        ace_info.dest_mac=mac_addr
+      else
+        ace_info.src='iots'
+        ace_info.src_mac=mac_addr
+        ace_info.dest='wan'
+      end
+    
       protoobj = v.matches[protolabel[proton]]
       log.info(k, ' ACE: ', v.name,  ' proto : ', protolabel[proton]  )
       log.info(' url: ', url, ' (', digtype, ')' )

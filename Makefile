@@ -1,13 +1,10 @@
 PREFIX?=
 DESTDIR?=${PREFIX}
-MUDSUPER=${DESTDIR}/usr/lib/lua/mud-super
+MUDSUPER=${DESTDIR}/usr/lib/lua/mud-controller
 
 all:
 	@true
 
 install:
 	mkdir -p ${MUDSUPER}
-	cp mud_controller.lua ${MUDSUPER}
-	cp mud_digger.lua     ${MUDSUPER}
-	cp mud_util.lua       ${MUDSUPER}
-	cp log.lua            ${MUDSUPER}
+	cp *.lua ${MUDSUPER}

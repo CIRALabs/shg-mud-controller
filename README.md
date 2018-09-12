@@ -1,5 +1,5 @@
 
-# MUD controller Proof of Concept
+# MUD Controller
  * Engine to be executed in the SecureHomeGateway. 
  * After a new device has entered the network and it's confirmation is sent through the mobile app this MUD controller is then triggered in order to: Read the MUD file and create the appropriate firewall rules in the SHG.
  

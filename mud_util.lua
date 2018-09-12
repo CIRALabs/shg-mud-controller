@@ -1,7 +1,7 @@
 local mudutil = { _version = "0.1.0" }
-local uci = require('uci')
-local fw = 'firewall'
-local muddigger = require('mud_digger')
+local uci = require("uci")
+local fw = "firewall"
+local muddigger = require("mud_digger")
 ucic = uci.cursor()
 
 local protolabel = {
@@ -55,10 +55,11 @@ function executeuci(rule)
   ucic.commit(fw)
 
   restartFw()
+  str_msg = " >>> UCI fw rule created: "
   if rule.src_mac ~= nil then
-    log.info(' >>> UCI fw rule created: ', rule.name, ' - ', rule.src_mac, ' > ', rule.dest_ip  )
+    log.info(str_msg, rule.name, ' - ', rule.src_mac, ' > ', rule.dest_ip  )
   else
-    log.info(' >>> UCI fw rule created: ', rule.name, ' - ', rule.dest_ip, ' > ', rule.dest_mac  )
+    log.info(str_msg, rule.name, ' - ', rule.dest_ip, ' > ', rule.dest_mac  )
   end
 
 end
@@ -85,13 +86,13 @@ mudutil.createrule = function (acl, mac_addr, direction)
       }
      
       if direction == 'to' then
-        ace_info.src = 'wan'
-        ace_info.dest = 'iots'
-        ace_info.dest_mac=mac_addr
+        ace_info.src = mudconfig.wanzone
+        ace_info.dest = mudconfig.iotszone
+        ace_info.dest_mac = mac_addr
       else
-        ace_info.src='iots'
-        ace_info.src_mac=mac_addr
-        ace_info.dest='wan'
+        ace_info.src = mudconfig.iotszone
+        ace_info.src_mac = mac_addr
+        ace_info.dest = mudconfig.wanzone
       end
     
       protoobj = v.matches[protolabel[proton]]
@@ -119,7 +120,12 @@ mudutil.createrule = function (acl, mac_addr, direction)
       if next(recs) then
         local basename = ace_info.name
         for i, v in ipairs(recs) do
-          ace_info.dest_ip = v
+          if direction == 'to' then
+            ace_info.src_ip = v
+          else 
+            ace_info.dest_ip = v
+          end
+          
           ace_info.name = basename .. '_' .. ipv .. '_' .. i
           executeuci(ace_info)
           created_rules[ace_info.name] = ace_info.name

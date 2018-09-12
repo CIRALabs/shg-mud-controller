@@ -1,9 +1,14 @@
-log = require "log"
-local mudcontroller = require('mud_controller')
-local json = require "cjson"
+log = require("log")
+mudconfig = require("mud_config")
 
-libunix = require "socket.unix"
-skt_path = 'mud_controller_skt'
+local mudcontroller = require("mud_controller")
+local json = require("cjson")
+local libunix = require("socket.unix")
+
+local mudlistener = { _version = "0.1.0" }
+
+skt_path = mudconfig.sktpath
+
 --clear old skt
 os.remove(skt_path)
 
@@ -64,7 +69,7 @@ local function add(data)
 
 end
 
-function listen()
+mudlistener.listen = function ()
   log.info('Listening on: ', skt_path)
 
   conn = assert(usocket:accept())
@@ -98,7 +103,8 @@ function listen()
   end
  
   log.warn('Connec evt: ', err)
-  listen()
+
+  mudlistener.listen()
 end
 
-listen()
+return mudlistener

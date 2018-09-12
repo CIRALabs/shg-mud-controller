@@ -16,7 +16,7 @@ function decode_f(f_path)
    return json.decode(l_file)
 end
 
-mudcontroller.add= function(f_path, mac_addr)
+mudcontroller.add = function(f_path, mac_addr)
   log.info('Loading file: ', f_path, ' for ', mac_addr )
 
   status, mud_obj = pcall(decode_f, f_path)

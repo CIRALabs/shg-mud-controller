@@ -4,19 +4,21 @@
 -- First: lua mud_listener.lua
 --   then lua sup_stub.lua
 
-socket = require"socket"
-socket.unix = require"socket.unix"
-c = assert(socket.unix())
-local skt_path = "mud_controller_skt"
-assert(c:connect(skt_path))
+socket = require("socket")
+socket.unix = require("socket.unix")
+mudconfig = require("mud_config")
+
+skt = assert(socket.unix())
+local skt_path = mudconfig.sktpath
+assert(skt:connect(skt_path))
 print('skt connected: ', skt_path)
 
 while 1 do
    print('Type data to send_')
-   local yy = io.read()
-   assert(c:send(yy .. '\n' ))
+   local msg = io.read()
+   assert(skt:send(msg .. '\n' ))
    print('Waiting reply... \n')
-   data, err = c:receive()
+   data, err = skt:receive()
    print("got back: \n", data .. "\n")
 end
 

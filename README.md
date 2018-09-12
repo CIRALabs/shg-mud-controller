@@ -10,6 +10,7 @@
    * Resolve urls 
    * Create new firewall rules using uci
    * Create one iptables rule per retrieved IP
+   * Delete rules
    
 ### Deps
  * http://downloads.openwrt.org/releases/18.06.0/packages/i386_pentium4/base/libuci-lua_2018-08-11-4c8b4d6e-1_i386_pentium4.ipk

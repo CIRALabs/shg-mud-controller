@@ -1,10 +1,11 @@
 LUA_PATH = '/usr/lib/lua/mud-super/?.lua'
 
-log = require "log"
-log.outfile = '/var/log/mud_controller.log'
-local json = require "cjson"
-local util = require "cjson.util"
-local mudutil = require "mud_util"
+log = require("log")
+log.outfile = mudconfig.outfile
+
+local json = require("cjson")
+local util = require("cjson.util")
+local mudutil = require("mud_util")
 
 local mudcontroller = { _version = "0.1.0" }
 

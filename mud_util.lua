@@ -29,6 +29,7 @@ mudutil.delrules = function(todel)
         ucic.delete(fw, v['.name'])
         found = true
         resp_obj['rules'][vname] = "ok"
+        break
       end
     end
     if not found then
@@ -59,7 +60,7 @@ function executeuci(rule)
   if rule.src_mac ~= nil then
     log.info(str_msg, rule.name, ' - ', rule.src_mac, ' > ', rule.dest_ip  )
   else
-    log.info(str_msg, rule.name, ' - ', rule.dest_ip, ' > ', rule.dest_mac  )
+    log.info(str_msg, rule.name, ' - ', rule.src_ip, ' > ', rule.dest_mac  )
   end
 
 end
@@ -133,8 +134,6 @@ mudutil.createrule = function (acl, mac_addr, direction)
       else
         log.warn('Skipping rule for: ', url, ' no ips retrieved.')
       end
-
-
     end
   else
     log.warn('no ace found in acl: ', acl.name)

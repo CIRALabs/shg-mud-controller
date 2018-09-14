@@ -34,7 +34,7 @@ mudcontroller.add = function(f_path, mac_addr)
 
   f_dev_pols = {}
   t_dev_pols = {}
-  
+
   --retrieving FROM dev policies
   if mud_obj['ietf-mud:mud']['from-device-policy'] ~= nil then
      for k, v in pairs(mud_obj['ietf-mud:mud']['from-device-policy']['access-lists']['access-list']) do
@@ -77,7 +77,7 @@ mudcontroller.add = function(f_path, mac_addr)
   obj_resp["status"] = "ok"
   obj_resp["mac_addr"] = mac_addr
   obj_resp["rules"] = all_rules
-  return obj_resp    
+  return obj_resp
 end
 
 return mudcontroller

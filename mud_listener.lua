@@ -14,6 +14,11 @@ os.remove(skt_path)
 
 usocket = assert(libunix())
 assert(usocket:bind(skt_path))
+
+--tweak socket perms: mud group
+os.execute('chmod g+w ' .. skt_path)
+os.execute('chgrp mud ' .. skt_path)
+
 assert(usocket:listen())
 
 --json decode wrapper for pcall

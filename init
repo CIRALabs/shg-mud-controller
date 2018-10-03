@@ -6,13 +6,12 @@ STOP=80
 USE_PROCD=1
 
 start_service() {
+        mkdir -p /tmp/mudfiles
         lxc-start --name=mud-controller
         sleep 2
         lxc-attach --name=mud-controller  -- /root/start
 
         (cd /srv/lxc/mud-controller/rootfs/home/mud && lua /usr/lib/lua/mud-controller/init.lua ) &
-        chgrp 999  /srv/lxc/mud-controller/rootfs/home/mud/mud_controller_skt
-        chmod g+rw /srv/lxc/mud-controller/rootfs/home/mud/mud_controller_skt
 }
 
 stop() {

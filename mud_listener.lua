@@ -5,7 +5,7 @@ local mudcontroller = require("mud_controller")
 local json = require("cjson")
 local libunix = require("socket.unix")
 
-local mudlistener = { _version = "0.1.0" }
+local mudlistener = { _version = "0.1.1" }
 
 skt_path = mudconfig.sktpath
 

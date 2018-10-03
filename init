@@ -10,9 +10,9 @@ start_service() {
         sleep 2
         lxc-attach --name=mud-controller  -- /root/start
 
-        (cd /srv/lxc/mud-controller/rootfs/run && lua /usr/lib/lua/mud-controller/init.lua ) &
-        chgrp 999  /srv/lxc/mud-controller/rootfs/run/mud_controller_skt
-        chmod g+rw /srv/lxc/mud-controller/rootfs/run/mud_controller_skt
+        (cd /srv/lxc/mud-controller/rootfs/home/mud && lua /usr/lib/lua/mud-controller/init.lua ) &
+        chgrp 999  /srv/lxc/mud-controller/rootfs/home/mud/mud_controller_skt
+        chmod g+rw /srv/lxc/mud-controller/rootfs/home/mud/mud_controller_skt
 }
 
 stop() {

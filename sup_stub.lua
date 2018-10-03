@@ -1,4 +1,7 @@
--- code that stubs the mud_supervisor 
+local module_folder = "/usr/lib/lua/mud-controller/"
+package.path = module_folder .. "?.lua;" .. package.path
+
+-- code that stubs the mud_supervisor
 -- for testing purposes only
 -- to connect with the domain socket
 -- First: lua init.lua

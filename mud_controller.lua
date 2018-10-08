@@ -56,6 +56,7 @@ mudcontroller.add = function(f_path, mac_addr)
   end
 
   local all_rules = {}
+  mudutil.createdenyrule( mac_addr )
   for k,v in pairs(mud_obj['ietf-access-control-list:acls']['acl']) do
      if f_dev_pols[v.name] ~= nil then
         f_dev_pols[v.name] = v

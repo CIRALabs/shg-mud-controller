@@ -73,8 +73,24 @@ function geturlproto(type, ace)
   end
 end
 
+mudutil.createdenyrule = function ( mac_addr)
+  --TODO use a dynamic name/src/dest for rule
+  ace_info = {
+    name = 'iot_toaster_deny', src = 'lan', dest = 'wan', proto='all',
+    target = 'REJECT', dest_ip = '0.0.0.0/0',
+    src_mac = mac_addr    
+  }
+
+  executeuci(ace_info)
+
+end
+
 mudutil.createrule = function (acl, mac_addr, direction)
+  
   local created_rules = {}
+
+
+
   if( acl.aces.ace) ~= nil then
     for k, v in pairs(acl.aces.ace) do
 

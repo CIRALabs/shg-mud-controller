@@ -7,7 +7,7 @@ local json = require("cjson")
 local util = require("cjson.util")
 local mudutil = require("mud_util")
 
-local mudcontroller = { _version = "0.1.2" }
+local mudcontroller = { _version = "0.1.3" }
 
 mudcontroller.del = function(todel)
   local obj_resp = mudutil.delrules(todel)

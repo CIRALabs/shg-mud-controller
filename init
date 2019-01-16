@@ -7,13 +7,13 @@ USE_PROCD=1
 
 start_service() {
         mkdir -p /tmp/mudfiles
-        lxc-start --name=mud-controller
+        lxc-start --name=mud-supervisor
         sleep 2
-        lxc-attach --name=mud-controller  -- /root/start
+        lxc-attach --name=mud-supervisor  -- /root/start
 
-        (cd /srv/lxc/mud-controller/rootfs/home/mud && lua /usr/lib/lua/mud-controller/init.lua ) &
+        (cd /srv/lxc/mud-supervisor/rootfs/home/mud && lua /usr/lib/lua/mud-controller/init.lua ) &
 }
 
 stop() {
-        lxc-stop --name=mud-controller
+        lxc-stop --name=mud-supervisor
 }

@@ -17,6 +17,11 @@ function restartFw()
   os.execute('/etc/init.d/firewall restart > /dev/null 2>&1')
 end
 
+function starts_with(str, start)
+  if str == nil then return false end
+  return str:sub(1, #start) == start
+end
+
 mudutil.delrules = function(todel)
   local resp_obj = {}
   resp_obj['status'] = "ok"
@@ -36,11 +41,54 @@ mudutil.delrules = function(todel)
       resp_obj['rules'][vname] = "rnf"
       resp_obj['status'] = "err"
     end
+    muddigger.remove(vname)
   end
 
   ucic.commit(fw)
   restartFw()
   return resp_obj
+end
+
+mudutil.refreshrule = function(rulename, type, ips)
+  -- rulename is same as in MUD file
+  -- However, rulenames in UCI are suffixed with ip version and counter
+  local ipv = type =='A' and 'ipv4' or 'ipv6'
+  local uci_rulename = rulename .. '_' .. ipv .. '_'
+
+  log.info("Refreshing rule ", rulename, " for ", ipv)
+
+  local matching_rules = {}
+  for _, v in pairs(uci.cursor().get_all(fw)) do
+    if (starts_with(v['.name'], uci_rulename) or starts_with(v['name'], uci_rulename)) and v['.type'] == 'rule' then
+      table.insert(matching_rules, v)
+    end
+  end
+
+  if #matching_rules == 0 then
+    log.warn("Could not find any rules matching ", uci_rulename .. '*')
+    return
+  end
+
+  -- Mark matching rules for removal
+  for _, rule in pairs(matching_rules) do
+    ucic.delete(fw, rule['.name'])
+  end
+  -- Create new rule by duplicating existing one
+  local rule = matching_rules[1]
+  local direction = rule.src_mac ~= nil and 'from' or 'to'
+  for i, v in ipairs(ips) do
+    if direction == 'to' then
+      rule.src_ip = v
+    else
+      rule.dest_ip = v
+    end
+
+    rule.name = rulename .. '_' .. ipv .. '_' .. i
+    executeuci(rule)
+  end
+
+  ucic.commit(fw)
+  restartFw()
 end
 
 function executeuci(rule)
@@ -49,7 +97,7 @@ function executeuci(rule)
 
   ucic.set(fw, rule.name, 'rule')
   for k, v in pairs(rule) do
-    ucic.set(fw, rule.name, k, v)
+    ucic.set(fw, rule.name, k, tostring(v))
   end
 
   ucic.reorder(fw, rule.name, 0)
@@ -132,7 +180,7 @@ mudutil.createrule = function (acl, mac_addr, direction)
       end
 
       --creates one iptables rule per resolved ip type
-      recs = muddigger.dig(url, digtype)
+      recs = muddigger.dig(ace_info.name, url, digtype)
 
       if next(recs) then
         local basename = ace_info.name

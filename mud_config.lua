@@ -18,5 +18,8 @@ mudconfig.resolvtimeout = 2
 --log file path
 mudconfig.outfile = "/var/log/mud_controller.log"
 
+--Disable cache in dev/test
+mudconfig.disable_dns_cache = false
+
 return mudconfig
 

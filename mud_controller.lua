@@ -6,6 +6,7 @@ log.outfile = mudconfig.outfile
 local json = require("cjson")
 local util = require("cjson.util")
 local mudutil = require("mud_util")
+local muddigger = require("mud_digger")
 
 local mudcontroller = { _version = "0.1.3" }
 
@@ -13,6 +14,8 @@ mudcontroller.del = function(todel)
   local obj_resp = mudutil.delrules(todel)
   return obj_resp
 end
+
+mudcontroller.monitor = function() muddigger.monitor(mudutil.refreshrule) end
 
 function decode_f(f_path)
    l_file = assert(util.file_load(f_path))

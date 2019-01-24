@@ -27,10 +27,10 @@ function decode_json(data)
 end
 
 function wrap_err_obj(msg)
-    local err_resp = {}
-    err_resp.status = 'err'
-    err_resp.msg = msg
-    return err_resp
+  local err_resp = {}
+  err_resp.status = 'err'
+  err_resp.msg = msg
+  return err_resp
 end
 
 local function add(data)
@@ -65,7 +65,7 @@ local function add(data)
       local response = mudcontroller.del(rules)
       return response
     elseif action == 'monitor' then
-        mudcontroller.monitor()
+      mudcontroller.monitor()
     else
       return wrap_err_obj('Invalid call. Action not yet implemented. ' ..  data)
     end
@@ -77,43 +77,43 @@ local function add(data)
 end
 
 mudlistener.listen = function ()
-  log.info('Listening on: ', skt_path)
+    log.info('Listening on: ', skt_path)
 
-  conn = assert(usocket:accept())
-  log.info(' --- Connected! --- ')
-  log.info('Waiting msg..')
-  data, err = conn:receive()
-
-  while not err do
-    log.info("got msg> " .. data)
-    if data == 'hi'or data == 'hello' then
-       print('\n\n HELLO! \n\n ')
-       conn:send("hey \n" )
-    elseif data == 'checkrules' or data == 'check rules' then
-       print('#iptables -L -n -v | grep iot_to')
-       os.execute('iptables -L -n -v | grep iot_to')
-       print('#ip6tables -L -n -v | grep iot_to')
-       os.execute('ip6tables -L -n -v | grep iot_to')
-       conn:send('ok\n')
-    elseif data == 'help' then
-       conn:send('{"action":"add", "mac_addr":"08:00:27:f0:5b:76", "file_path":"/root/repos/shg-mud-controller/toaster_mud.json"} \n')
-    elseif data == 'helpdel' then
-       conn:send('{"action":"del", "rules":["iot_toaster_ping_cnn_ipv4_1","iot_toaster_tr_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_3","iot_toaster_google_ipv6_1","iot_toaster_google_ipv4_1","iot_toaster_dns_ipv4_1","iot_toaster_ping_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_4","iot_toaster_app_ipv6_1","iot_toaster_app_ipv4_1","iot_toaster_ping_cnn_ipv4_2", "iot_toaster_ping_ipv4_1", "iot_toaster_to_ipv4_1"]}  \n')
-    elseif data == 'monitor' then
-        mudcontroller.monitor()
-        conn:send('ok\n')
-    else
-       local resp_data = add(data)
-       log.info('Response obj: ', json.encode(resp_data))
-       conn:send(json.encode(resp_data) .. "\n")
-    end
+    conn = assert(usocket:accept())
+    log.info(' --- Connected! --- ')
     log.info('Waiting msg..')
     data, err = conn:receive()
-  end
 
-  log.warn('Connec evt: ', err)
+    while not err do
+        log.info("got msg> " .. data)
+        if data == 'hi'or data == 'hello' then
+            print('\n\n HELLO! \n\n ')
+            conn:send("hey \n" )
+        elseif data == 'checkrules' or data == 'check rules' then
+            print('#iptables -L -n -v | grep iot_to')
+            os.execute('iptables -L -n -v | grep iot_to')
+            print('#ip6tables -L -n -v | grep iot_to')
+            os.execute('ip6tables -L -n -v | grep iot_to')
+            conn:send('ok\n')
+        elseif data == 'help' then
+            conn:send('{"action":"add", "mac_addr":"08:00:27:f0:5b:76", "file_path":"/root/repos/shg-mud-controller/toaster_mud.json"} \n')
+        elseif data == 'helpdel' then
+            conn:send('{"action":"del", "rules":["iot_toaster_ping_cnn_ipv4_1","iot_toaster_tr_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_3","iot_toaster_google_ipv6_1","iot_toaster_google_ipv4_1","iot_toaster_dns_ipv4_1","iot_toaster_ping_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_4","iot_toaster_app_ipv6_1","iot_toaster_app_ipv4_1","iot_toaster_ping_cnn_ipv4_2", "iot_toaster_ping_ipv4_1", "iot_toaster_to_ipv4_1"]}  \n')
+        elseif data == 'monitor' then
+            mudcontroller.monitor()
+            conn:send('ok\n')
+        else
+            local resp_data = add(data)
+            log.info('Response obj: ', json.encode(resp_data))
+            conn:send(json.encode(resp_data) .. "\n")
+        end
+        log.info('Waiting msg..')
+        data, err = conn:receive()
+    end
 
-  mudlistener.listen()
+    log.warn('Connec evt: ', err)
+
+    mudlistener.listen()
 end
 
 return mudlistener

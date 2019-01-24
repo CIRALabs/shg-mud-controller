@@ -29,7 +29,7 @@ mudutil.delrules = function(todel)
   for kname,vname in pairs(todel) do
     local found = false
     for k,v in pairs(uci.cursor().get_all(fw)) do
-      if (v['.name'] == vname  or v['name'] == vname) and v['.type'] == 'rule' then
+      if (v['.name'] == vname or v['name'] == vname) and v['.type'] == 'rule' then
         log.info('Deleting: name=', v['name'] , ' .name=', v['.name'] )
         ucic.delete(fw, v['.name'])
         found = true
@@ -126,7 +126,7 @@ mudutil.createdenyrule = function ( mac_addr)
   ace_info = {
     name = 'iot_toaster_deny', src = 'lan', dest = 'wan', proto='all',
     target = 'REJECT', dest_ip = '0.0.0.0/0',
-    src_mac = mac_addr    
+    src_mac = mac_addr
   }
 
   executeuci(ace_info)
@@ -134,10 +134,8 @@ mudutil.createdenyrule = function ( mac_addr)
 end
 
 mudutil.createrule = function (acl, mac_addr, direction)
-  
+
   local created_rules = {}
-
-
 
   if( acl.aces.ace) ~= nil then
     for k, v in pairs(acl.aces.ace) do
@@ -149,7 +147,7 @@ mudutil.createrule = function (acl, mac_addr, direction)
         --TODO we shouldnt rely on v.name it can be invalid for uci
         name = v.name, target = v.matches.actions.forwarding, proto=proton
       }
-     
+
       if direction == 'to' then
         ace_info.src = mudconfig.wanzone
         ace_info.dest = mudconfig.iotszone
@@ -159,7 +157,7 @@ mudutil.createrule = function (acl, mac_addr, direction)
         ace_info.src_mac = mac_addr
         ace_info.dest = mudconfig.wanzone
       end
-    
+
       protoobj = v.matches[protolabel[proton]]
       log.info(k, ' ACE: ', v.name,  ' proto : ', protolabel[proton]  )
       log.info(' url: ', url, ' (', digtype, ')' )
@@ -187,10 +185,10 @@ mudutil.createrule = function (acl, mac_addr, direction)
         for i, v in ipairs(recs) do
           if direction == 'to' then
             ace_info.src_ip = v
-          else 
+          else
             ace_info.dest_ip = v
           end
-          
+
           ace_info.name = basename .. '_' .. ipv .. '_' .. i
           executeuci(ace_info)
           created_rules[ace_info.name] = ace_info.name

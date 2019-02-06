@@ -4,6 +4,7 @@ mudconfig = require("mud_config")
 local mudcontroller = require("mud_controller")
 local json = require("cjson")
 local libunix = require("socket.unix")
+local luaevent = require("luaevent")
 
 local mudlistener = { _version = "0.1.1" }
 
@@ -12,8 +13,9 @@ skt_path = mudconfig.sktpath
 --clear old skt
 os.remove(skt_path)
 
-usocket = assert(libunix())
+local usocket = assert(libunix())
 assert(usocket:bind(skt_path))
+usocket:settimeout(0)
 
 --tweak socket perms: mud group
 os.execute('chmod g+w ' .. skt_path)
@@ -77,43 +79,41 @@ local function add(data)
 end
 
 mudlistener.listen = function ()
-    log.info('Listening on: ', skt_path)
+  log.info('Listening on: ', skt_path)
+  luaevent.addserver(usocket, process)
+  luaevent.loop()
+end
 
-    conn = assert(usocket:accept())
-    log.info(' --- Connected! --- ')
-    log.info('Waiting msg..')
-    data, err = conn:receive()
 
-    while not err do
-        log.info("got msg> " .. data)
-        if data == 'hi'or data == 'hello' then
-            print('\n\n HELLO! \n\n ')
-            conn:send("hey \n" )
-        elseif data == 'checkrules' or data == 'check rules' then
-            print('#iptables -L -n -v | grep iot_to')
-            os.execute('iptables -L -n -v | grep iot_to')
-            print('#ip6tables -L -n -v | grep iot_to')
-            os.execute('ip6tables -L -n -v | grep iot_to')
-            conn:send('ok\n')
-        elseif data == 'help' then
-            conn:send('{"action":"add", "mac_addr":"08:00:27:f0:5b:76", "file_path":"/root/repos/shg-mud-controller/toaster_mud.json"} \n')
-        elseif data == 'helpdel' then
-            conn:send('{"action":"del", "rules":["iot_toaster_ping_cnn_ipv4_1","iot_toaster_tr_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_3","iot_toaster_google_ipv6_1","iot_toaster_google_ipv4_1","iot_toaster_dns_ipv4_1","iot_toaster_ping_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_4","iot_toaster_app_ipv6_1","iot_toaster_app_ipv4_1","iot_toaster_ping_cnn_ipv4_2", "iot_toaster_ping_ipv4_1", "iot_toaster_to_ipv4_1"]}  \n')
-        elseif data == 'monitor' then
-            mudcontroller.monitor()
-            conn:send('ok\n')
-        else
-            local resp_data = add(data)
-            log.info('Response obj: ', json.encode(resp_data))
-            conn:send(json.encode(resp_data) .. "\n")
-        end
-        log.info('Waiting msg..')
-        data, err = conn:receive()
+function process(skt)
+  while true do
+    local data, ret = luaevent.receive(skt)
+    log.info("got msg> " .. data)
+    if ret == 'closed' then
+      break
+    elseif data == 'hi'or data == 'hello' then
+      print('\n\n HELLO! \n\n ')
+      luaevent.send(skt, "hey \n" )
+    elseif data == 'checkrules' or data == 'check rules' then
+      print('#iptables -L -n -v | grep iot_to')
+      os.execute('iptables -L -n -v | grep iot_to')
+      print('#ip6tables -L -n -v | grep iot_to')
+      os.execute('ip6tables -L -n -v | grep iot_to')
+      luaevent.send(skt, 'ok\n')
+    elseif data == 'help' then
+      luaevent.send(skt, '{"action":"add", "mac_addr":"08:00:27:f0:5b:76", "file_path":"/root/repos/shg-mud-controller/toaster_mud.json"} \n')
+    elseif data == 'helpdel' then
+      luaevent.send(skt, '{"action":"del", "rules":["iot_toaster_ping_cnn_ipv4_1","iot_toaster_tr_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_3","iot_toaster_google_ipv6_1","iot_toaster_google_ipv4_1","iot_toaster_dns_ipv4_1","iot_toaster_ping_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_4","iot_toaster_app_ipv6_1","iot_toaster_app_ipv4_1","iot_toaster_ping_cnn_ipv4_2", "iot_toaster_ping_ipv4_1", "iot_toaster_to_ipv4_1"]}  \n')
+    elseif data == 'monitor' then
+      mudcontroller.monitor()
+      luaevent.send(skt, 'ok\n')
+    else
+      local resp_data = add(data)
+      log.info('Response obj: ', json.encode(resp_data))
+      luaevent.send(skt, json.encode(resp_data) .. "\n")
     end
-
-    log.warn('Connec evt: ', err)
-
-    mudlistener.listen()
+  end
+  skt:close()
 end
 
 return mudlistener

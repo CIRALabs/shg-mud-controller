@@ -81,6 +81,12 @@ end
 mudlistener.listen = function ()
   log.info('Listening on: ', skt_path)
   luaevent.addserver(usocket, process)
+  -- Need to keep reference to event otherwise it is garbage collected
+  local monitor_ev = luaevent.addevent(nil, luaevent.core.EV_TIMEOUT, function(ev)
+    log.debug("Start periodic monitoring")
+    mudcontroller.monitor()
+    log.debug("End periodic monitoring")
+  end, mudconfig.monitoring_period)
   luaevent.loop()
 end
 

@@ -24,5 +24,8 @@ mudconfig.disable_dns_cache = false
 -- Period for name-to-ip monitoring, in sec
 mudconfig.monitoring_period = 60
 
+--path for the state file of monitored names
+mudconfig.statepath = "mud_controller_state.json"
+
 return mudconfig
 

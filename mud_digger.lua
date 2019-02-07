@@ -11,8 +11,32 @@ if mudconfig.disable_dns_cache then
   rInst:disableCache()
 end
 
+function loadstate()
+  local file, err = io.open(mudconfig.statepath, "r")
+  if file == nil then
+    log.error("Cannot load file " .. mudconfig.statepath .. ": ", err)
+    return {}
+  end
+  local contents = file:read("*a")
+  json_data = json.decode(contents);
+  file:close()
+  return json_data
+end
+
 -- Map rulename -> qname -> type -> values
-local monitoredNames = {}
+local monitoredNames = loadstate()
+
+-- This function needs to be defined after monitoredNames
+function savestate()
+  local file, err = io.open(mudconfig.statepath, "w")
+  if file == nil then
+    log.error("Cannot save to file " .. mudconfig.statepath .. ": ", err)
+    return nil
+  end
+  local contents = json.encode(monitoredNames)
+  file:write(contents)
+  file:close()
+end
 
 function resolve(qname, type)
   resp = {}
@@ -44,16 +68,19 @@ muddigger.dig = function (rulename, qname, type)
   log.debug('Monitored names: ')
   log.debug(json.encode(monitoredNames))
 
+  savestate()
+
   return resp
 end
 
 muddigger.remove = function (rulename)
   monitoredNames[rulename] = nil
+  savestate()
 end
 
 muddigger.monitor = function(cb)
-
-log.info("Starting monitoring...")
+  log.info("Starting monitoring...")
+  local update = false
   for rulename, by_qname in pairs(monitoredNames) do
     for qname, by_type in pairs(by_qname) do
       for type, cached_resp in pairs(by_type) do
@@ -67,9 +94,13 @@ log.info("Starting monitoring...")
           -- Refresh rule
           log.debug("Refresh rule ", rulename)
           cb(rulename, type, resp)
+          update = true
         end
       end
     end
+  end
+  if update then
+    savestate()
   end
 end
 

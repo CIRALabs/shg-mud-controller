@@ -1,8 +1,8 @@
-local mudconfig = require("mud_config")
-
 local muddigger = { _version = "0.1.0" }
 
 local json = require("cjson")
+local mudconfig = require("mud_config")
+local mudutil = require("mud_util")
 
 local Resolver = require("dns.resolver")
 local rInst = Resolver.new(mudconfig.resolvers, mudconfig.timeout)
@@ -11,32 +11,16 @@ if mudconfig.disable_dns_cache then
   rInst:disableCache()
 end
 
-function loadstate()
-  local file, err = io.open(mudconfig.statepath, "r")
-  if file == nil then
-    log.error("Cannot load file " .. mudconfig.statepath .. ": ", err)
-    return {}
+local function initmonitoring()
+  local status, obj = pcall(mudutil.decode_f, mudconfig.statepath)
+  if not status then
+    obj = {}
   end
-  local contents = file:read("*a")
-  json_data = json.decode(contents);
-  file:close()
-  return json_data
+  return obj
 end
 
 -- Map rulename -> qname -> type -> values
-local monitoredNames = loadstate()
-
--- This function needs to be defined after monitoredNames
-function savestate()
-  local file, err = io.open(mudconfig.statepath, "w")
-  if file == nil then
-    log.error("Cannot save to file " .. mudconfig.statepath .. ": ", err)
-    return nil
-  end
-  local contents = json.encode(monitoredNames)
-  file:write(contents)
-  file:close()
-end
+local monitoredNames = initmonitoring()
 
 function resolve(qname, type)
   resp = {}
@@ -68,14 +52,14 @@ muddigger.dig = function (rulename, qname, type)
   log.debug('Monitored names: ')
   log.debug(json.encode(monitoredNames))
 
-  savestate()
+  mudutil.save_f(mudconfig.statepath, monitoredNames)
 
   return resp
 end
 
 muddigger.remove = function (rulename)
   monitoredNames[rulename] = nil
-  savestate()
+  mudutil.save_f(mudconfig.statepath, monitoredNames)
 end
 
 muddigger.monitor = function(cb)
@@ -88,7 +72,7 @@ muddigger.monitor = function(cb)
         table.sort(resp)
         log.debug("Cached data for", rulename, ' - ', qname, ' - ', type, ': ', json.encode(cached_resp))
         log.debug("Newly resolved data: ", json.encode(resp))
-        if not deepcompare(resp, cached_resp) then
+        if not mudutil.deepcompare(resp, cached_resp) then
           -- Update monitor
           by_type[type] = resp
           -- Refresh rule
@@ -100,33 +84,9 @@ muddigger.monitor = function(cb)
     end
   end
   if update then
-    savestate()
+    mudutil.save_f(mudconfig.statepath, monitoredNames)
   end
 end
-
--- From https://web.archive.org/web/20131225070434/http://snippets.luacode.org/snippets/Deep_Comparison_of_Two_Values_3,
--- MIT license
--- Lists must have the same element order to be equal
-function deepcompare(t1,t2,ignore_mt)
-  local ty1 = type(t1)
-  local ty2 = type(t2)
-  if ty1 ~= ty2 then return false end
-  -- non-table types can be directly compared
-  if ty1 ~= 'table' and ty2 ~= 'table' then return t1 == t2 end
-  -- as well as tables which have the metamethod __eq
-  local mt = getmetatable(t1)
-  if not ignore_mt and mt and mt.__eq then return t1 == t2 end
-  for k1,v1 in pairs(t1) do
-    local v2 = t2[k1]
-    if v2 == nil or not deepcompare(v1,v2) then return false end
-  end
-  for k2,v2 in pairs(t2) do
-    local v1 = t1[k2]
-    if v1 == nil or not deepcompare(v1,v2) then return false end
-  end
-  return true
-end
-
 
 return muddigger
 

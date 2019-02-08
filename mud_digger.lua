@@ -58,6 +58,7 @@ muddigger.dig = function (rulename, qname, type)
 end
 
 muddigger.remove = function (rulename)
+  log.debug("Remove rule '" .. rulename .. "' from monitoring")
   monitoredNames[rulename] = nil
   mudutil.save_f(mudconfig.statepath, monitoredNames)
 end

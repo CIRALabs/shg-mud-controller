@@ -68,6 +68,8 @@ mudrule.delrules = function(todel)
     if not found then
       resp_obj['rules'][vname] = "rnf"
       resp_obj['status'] = "err"
+    else
+      muddigger.remove(vname)
     end
   end
 

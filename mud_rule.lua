@@ -53,15 +53,16 @@ mudrule.delrules = function(todel)
   local resp_obj = {}
   resp_obj['status'] = "ok"
   resp_obj['rules'] = {}
-  for kname,vname in pairs(todel) do
+  for _, vname in pairs(todel) do
     local found = false
-    for k,v in pairs(uci.cursor().get_all(fw)) do
-      if (v['.name'] == vname  or v['name'] == vname) and v['.type'] == 'rule' then
+    local uci_rulename = vname .. '_'
+
+    for _, v in pairs(uci.cursor().get_all(fw)) do
+      if mudutil.rule_match_name(uci_rulename, v) then
         log.info('Deleting: name=', v['name'] , ' .name=', v['.name'] )
         ucic.delete(fw, v['.name'])
         found = true
         resp_obj['rules'][vname] = "ok"
-        break
       end
     end
     if not found then
@@ -187,6 +188,11 @@ mudrule.createrule = function (acl, mac_addr, direction)
 
           ace_info.name = basename .. '_' .. ipv .. '_' .. i
           executeuci(ace_info)
+
+          if created_rules[basename] == nil then
+            created_rules[basename] = {}
+          end
+          table.insert(created_rules[basename], ace_info.name)
           created_rules[ace_info.name] = ace_info.name
         end
       else

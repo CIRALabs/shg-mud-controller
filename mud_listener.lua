@@ -54,10 +54,8 @@ local function add(data)
       --loop through rules so that cjson does not insert keys in the response
       if response ~= nill and response.status == 'ok' and response.rules ~= nil then
         local new_rules = {}
-        local i = 1
-        for k,v in pairs (response.rules) do
-          new_rules[i]  = v
-          i = i + 1
+        for basename, rules in pairs (response.rules) do
+          new_rules[basename] = rules
         end
         response.rules = new_rules
       end

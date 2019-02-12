@@ -195,7 +195,6 @@ mudrule.createrule = function (acl, mac_addr, direction)
             created_rules[basename] = {}
           end
           table.insert(created_rules[basename], ace_info.name)
-          created_rules[ace_info.name] = ace_info.name
         end
       else
         log.warn('Skipping rule for: ', url, ' no ips retrieved.')

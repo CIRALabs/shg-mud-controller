@@ -84,7 +84,7 @@ mudrule.refreshrule = function(rulename, type, ips)
   local ipv = type =='A' and 'ipv4' or 'ipv6'
   local uci_rulename = rulename .. '_' .. ipv .. '_'
 
-  log.info("Refreshing rule ", rulename, " for ", ipv)
+  log.info("Refreshing rule", rulename, "for", ipv)
 
   local matching_rules = {}
   for _, v in pairs(uci.cursor().get_all(fw)) do

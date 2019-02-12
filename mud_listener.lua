@@ -107,7 +107,7 @@ function process(skt)
     elseif data == 'help' then
       luaevent.send(skt, '{"action":"add", "mac_addr":"08:00:27:f0:5b:76", "file_path":"/root/repos/shg-mud-controller/toaster_mud.json"} \n')
     elseif data == 'helpdel' then
-      luaevent.send(skt, '{"action":"del", "rules":["iot_toaster_ping_cnn_ipv4_1","iot_toaster_tr_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_3","iot_toaster_google_ipv6_1","iot_toaster_google_ipv4_1","iot_toaster_dns_ipv4_1","iot_toaster_ping_cira_ipv4_1","iot_toaster_ping_cnn_ipv4_4","iot_toaster_app_ipv6_1","iot_toaster_app_ipv4_1","iot_toaster_ping_cnn_ipv4_2", "iot_toaster_ping_ipv4_1", "iot_toaster_to_ipv4_1"]}  \n')
+      luaevent.send(skt, '{"action":"del", "rules":["iot_toaster_to","iot_toaster_app","iot_toaster_google","iot_toaster_dns","iot_toaster_ping","iot_toaster_update"]}  \n')
     elseif data == 'monitor' then
       mudcontroller.monitor()
       luaevent.send(skt, 'ok\n')

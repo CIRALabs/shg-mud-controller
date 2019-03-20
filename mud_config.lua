@@ -18,8 +18,8 @@ mudconfig.resolvtimeout = 2
 --log file path
 mudconfig.outfile = "/var/log/mud_controller.log"
 
---Disable cache in dev/test
-mudconfig.disable_dns_cache = false
+--Disable cache
+mudconfig.disable_dns_cache = true
 
 --Period for name-to-ip monitoring, in sec
 mudconfig.monitoring_period = 60

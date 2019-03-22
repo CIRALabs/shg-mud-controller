@@ -6,8 +6,5 @@ all:
 	@true
 
 install:
-	mkdir -p ${MUDSUPER} ${DESTDIR}/etc/init.d
+	mkdir -p ${MUDSUPER}
 	cp *.lua ${MUDSUPER}
-	cp init  ${DESTDIR}/etc/init.d/mud-controller
-	chmod a+x ${DESTDIR}/etc/init.d/mud-controller
-

@@ -7,7 +7,7 @@ mudconfig.iotszone = "iots"
 mudconfig.wanzone = "wan"
 
 --unix socket path to listen to 
-mudconfig.sktpath = "mud_controller_skt"
+mudconfig.sktpath = "/srv/lxc/mud-supervisor/rootfs/home/mud/mud_controller_skt"
 
 --resolvers table to be used by digger
 mudconfig.resolvers = {"127.0.0.1"}
